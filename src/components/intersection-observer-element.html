@@ -1,0 +1,112 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="intersection-observer-element">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <div id="slottedData">
+            <slot></slot>
+        </div>
+    </template>
+
+    <script>
+        /**
+         * `intersection-observer-element`
+         * Reflects contained elements visibility in attributes
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class IntersectionObserverElement extends Polymer.Element {
+            static get is() {
+                return 'intersection-observer-element';
+            }
+            static get properties() {
+                return {
+                    thresholds: {
+                        type: Array,
+                        value: [0.0, 0.25, 0.5, 0.75, 1.0]
+                    },
+                    rootMargin: {
+                        type: String,
+                        value: "0px"
+                    },
+                    visible: {
+                        type: Boolean,
+                        value: false,
+                        reflectToAttribute: true,
+                        readOnly: true,
+                        notify: true
+                    },
+                    ratio: {
+                        type: Number,
+                        reflectToAttribute: true,
+                        readOnly: true
+                    },
+                    visibleLimit: {
+                        type: Number,
+                        value: 0.5,
+                        reflectToAttribute: true
+                    },
+
+                    current: {
+                        type: Number,
+                        value: -1
+                    },
+
+                    allEntries: {
+                        type: Array,
+                        value: function () {
+                            return [];
+                        }
+                    },
+
+                    sections: {
+                        type: Array,
+                        value: function () {
+                            return [];
+                        }
+                    }
+                };
+            }
+            connectedCallback() {
+                super.connectedCallback();
+                this.observer = new IntersectionObserver(this.handleIntersectionCallback.bind(this), {
+                    root: document.rootElement,
+                    rootMargin: this.rootMargin,
+                    threshold: this.thresholds
+                });
+                this.observer.observe(this.$.slottedData);
+            }
+
+            handleIntersectionCallback(entries) {
+                // entries.forEach(entry => {
+                //     if (entry.intersectionRatio > 0.5) {
+                //         const newcurrent = this.sections.indexOf(entry.target);
+                //         if (newcurrent === this.current) return;
+                //         const direction = newcurrent > this.current;
+                //         if (this.current >= 0) {
+                //             this.allEntries[this.current].exit(direction ? 'down' : 'up');
+                //         }
+                //         this.allEntries[newcurrent].enter(direction ? 'down' : 'up');
+                //         this.current = newcurrent;
+                //     }
+                // });
+                this.fireEvent(entries);
+            }
+
+            fireEvent(entries) {
+                this.dispatchEvent(new CustomEvent('test-observer', {
+                    detail: entries,
+                    bubbles: true,
+                    composed: true
+                }));
+            }
+        }
+        window.customElements.define(IntersectionObserverElement.is, IntersectionObserverElement);
+    </script>
+</dom-module>

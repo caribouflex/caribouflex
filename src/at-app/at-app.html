@@ -1,0 +1,126 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../components/wrap-letter.html">
+<link rel="import" href="../components/intersection-observer-element.html">
+
+<dom-module id="at-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .wordMove {
+        color: white;
+      }
+
+      .wordMove {
+        position: absolute;
+        bottom: 6vmax;
+        left: 0;
+        padding-left: 6vmax;
+        z-index: 1000;
+        line-height: 0.8;
+      }
+
+      .wordMove {
+        position: fixed;
+        white-space: pre;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+    <div class="divContent">
+      <wrap-letter class="wordMove" word="toto"></wrap-letter>
+      <div style="height:1000px;background-color:blue;display:block;"></div>
+    </div>
+    <div class="divContent">
+      <wrap-letter class="wordMove" word="pipi"></wrap-letter>
+      <div style="height:1000px;background-color:red;display:block;"></div>
+    </div>
+    <div class="divContent">
+      <wrap-letter class="wordMove" word="papq"></wrap-letter>
+      <div style="height:1000px;background-color:yellow;display:block;"></div>
+    </div>
+    <div class="divContent">
+      <wrap-letter class="wordMove" word="tretre"></wrap-letter>
+      <div style="height:1000px;background-color:orange;display:block;"></div>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class AtApp extends Polymer.Element {
+      static get is() {
+        return 'at-app';
+      }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'at-app'
+          },
+
+          observer: Object,
+          current: {
+            type: Number,
+            value: -1
+          },
+
+          allEntries: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+
+          sections: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this.sections = Array.from(this.shadowRoot.querySelectorAll('.divContent'));
+
+        if ('IntersectionObserver' in window) {
+          document.body.classList.add('ioapi');
+
+          this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.intersectionRatio > 0.5) {
+                const newcurrent = this.sections.indexOf(entry.target);
+                if (newcurrent === this.current) return;
+                const direction = newcurrent > this.current;
+                if (this.current >= 0) {
+                  this.allEntries[this.current].exit(direction ? 'down' : 'up');
+                }
+                this.allEntries[newcurrent].enter(direction ? 'down' : 'up');
+                this.current = newcurrent;
+              }
+            });
+          }, {
+            threshold: 0.5
+          });
+
+          this.allEntries = Array.from(this.shadowRoot.querySelectorAll('.wordMove'));
+          this.sections.forEach(section => {
+            //section.querySelector('.wordMove');
+            this.observer.observe(section);
+          });
+        }
+      }
+    }
+
+    window.customElements.define(AtApp.is, AtApp);
+  </script>
+</dom-module>
