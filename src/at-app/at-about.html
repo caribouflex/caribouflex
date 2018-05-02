@@ -1,0 +1,116 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../components/mix-letter.html">
+
+
+<dom-module id="at-about">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #background {
+        display: block;
+        /* background-color: var(--dark-primary-color); */
+        background-color: black;
+        top: 10vmax;
+        height: 140px;
+        left: 256px;
+        padding-left: 6vmax;
+        z-index: 1000;
+        position: fixed;
+        width: 200px;
+      }
+    </style>
+    <div id="background"></div>
+    <div class="divContent">
+      <mix-letter class="wordMove" word="toto"></mix-letter>
+      <div style="height:1000px;display:block;"></div>
+    </div>
+    <div class="divContent">
+      <mix-letter class="wordMove" word="pipi"></mix-letter>
+      <div style="height:1000px;display:block;"></div>
+    </div>
+    <div class="divContent">
+      <mix-letter class="wordMove" word="papq"></mix-letter>
+      <div style="height:1000px;display:block;"></div>
+    </div>
+    <div class="divContent">
+      <mix-letter class="wordMove" word="tretre"></mix-letter>
+      <div style="height:1000px;display:block;"></div>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class AtAbout extends Polymer.Element {
+      static get is() {
+        return 'at-about';
+      }
+      static get properties() {
+        return {
+          observer: Object,
+          current: {
+            type: Number,
+            value: -1
+          },
+
+          allEntries: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+
+          sections: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this.sections = Array.from(this.shadowRoot.querySelectorAll('.divContent'));
+
+        if ('IntersectionObserver' in window) {
+          document.body.classList.add('ioapi');
+
+          this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.intersectionRatio > 0.5) {
+                const newcurrent = this.sections.indexOf(entry.target);
+                if (newcurrent === this.current) return;
+                const direction = newcurrent > this.current;
+                if (this.current >= 0) {
+                  this.allEntries[this.current].exit(direction ? 'down' : 'up');
+                }
+                this.allEntries[newcurrent].enter(direction ? 'down' : 'up');
+                this.current = newcurrent;
+              }
+            });
+          }, {
+            threshold: 0.5
+          });
+
+          this.allEntries = Array.from(this.shadowRoot.querySelectorAll('.wordMove'));
+          this.sections.forEach(section => {
+            //section.querySelector('.wordMove');
+            this.observer.observe(section);
+          });
+        }
+      }
+    }
+
+    window.customElements.define(AtAbout.is, AtAbout);
+  </script>
+</dom-module>
