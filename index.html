@@ -15,6 +15,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.4/svg.min.js"></script>
 
   <script src="/bower_components/vivus/dist/vivus.min.js"></script>
+  <script src="/bower_components/particles.js/particles.min.js"></script>
 
   <link rel="import" href="/src/at-app/at-app.html">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
@@ -28,10 +29,17 @@
       width: 100%;
       height: 100%;
       font-family: 'Montserrat', sans-serif;
+    }
 
-      /* --primary-color: #fe6779;
-      --secondary-color: #428ae0;
-      --tertiary-color: #ffa285; */
+
+    #myIdName {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 100vh;
     }
   </style>
 
@@ -39,7 +47,64 @@
 </head>
 
 <body>
+  <div id="myIdName"></div>
   <at-app></at-app>
+
+  <script>
+    particlesJS(
+      'myIdName', {
+        'particles': {
+          'number': {
+            'value': 168 // set dots numbers ←
+          },
+          'color': {
+            // set colors and number of colors ↓
+            'value': ['#FFB74D', '#FF5252', '#7C4DFF', '#00B8D4']
+          },
+          'shape': {
+            'type': 'circle'
+          },
+          'opacity': {
+            'value': 1,
+            'random': false,
+            'anim': {
+              'enable': false
+            }
+          },
+          'size': {
+            'value': 4, // set dots size ←
+            'random': true,
+            'anim': {
+              'enable': false,
+            }
+          },
+          'line_linked': {
+            'enable': false
+          },
+          'move': {
+            'enable': true,
+            'speed': 4, // set speed ←
+            'direction': 'none',
+            'random': true,
+            'straight': false,
+            'out_mode': 'out'
+          }
+        },
+        'interactivity': {
+          'detect_on': 'canvas',
+          'events': {
+            'onhover': {
+              'enable': false
+            },
+            'onclick': {
+              'enable': false
+            },
+            'resize': true
+          }
+        },
+        'retina_detect': true
+      });
+  </script>
 </body>
 
 </html>
