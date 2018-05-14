@@ -1,0 +1,7 @@
+{
+  "name": "arthur-tressol",
+  "short_name": "arthur-tressol",
+  "description": "My portfolio and cursus",
+  "start_url": "/",
+  "display": "standalone"
+}
