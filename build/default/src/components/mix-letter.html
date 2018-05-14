@@ -1,0 +1,119 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet">
+
+<dom-module id="mix-letter">
+    <template>
+        <style>
+            :host {
+                display: block;
+                color: white;
+                top: 15%;
+                left: 280px;
+                /* padding-left: 6vmax; */
+                z-index: 1000;
+                line-height: 0.8;
+                position: fixed;
+                /* white-space: pre; */
+                font-size: 50px;
+                font-family: 'Source Code Pro', monospace;
+            }
+
+            #wordContent {
+                opacity: 0;
+            }
+        </style>
+        <div id="wordContent">[[word]]</div>
+    </template>
+
+    <script>
+        /**
+         * @customElement
+         * @polymer
+         */
+        class MixLetterElement extends Polymer.Element {
+            static get is() {
+                return 'mix-letter';
+            }
+            static get properties() {
+                return {
+                    chars: {
+                        type: Array,
+                        value: function () {
+                            return ['$', '%', '#', '@', '&', '(', ')', '=', '*', '/'];
+                        }
+                    },
+
+                    charsLength: {
+                        type: Number,
+                        value: 10,
+                        readOnly: true
+                    },
+
+                    element: Object,
+                    word: String,
+                    letters: {
+                        type: Array,
+                        value: function () {
+                            return [];
+                        }
+                    },
+                    lettersLength: Number,
+
+                    observer: Object,
+
+                };
+            }
+
+            static get observers() {
+                return ["_initWord(word)"];
+            }
+
+            ready() {
+                super.ready();
+            }
+
+            _initWord(word) {
+                charming(this.$.wordContent)
+                this.letters = Array.from(this.$.wordContent.querySelectorAll('span'));
+                this.letters.forEach(letter => letter.dataset.initial = letter.innerHTML);
+                this.lettersLength = this.letters.length;
+                // this.observer.observe(this);
+            }
+
+            getRandomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            enter(direction = 'down') {
+                this.$.wordContent.style.opacity = 1;
+
+                this.timeouts = [];
+                this.complete = false;
+                let cnt = 0;
+                this.letters.forEach((letter, pos) => {
+                    const timeout = setTimeout(() => {
+                        letter.innerHTML = this.chars[this.getRandomInt(0, this.charsLength - 1)];
+                        setTimeout(() => {
+                            letter.innerHTML = letter.dataset.initial;
+                            ++cnt;
+                            if (cnt === this.lettersLength) {
+                                this.complete = true;
+                            }
+                        }, 100);
+                    }, pos * 80);
+                    this.timeouts.push(timeout);
+                });
+            }
+
+            exit(direction = 'down') {
+                this.$.wordContent.style.opacity = 0;
+                if (this.complete) return;
+                for (let i = 0, len = this.timeouts.length; i <= len - 1; ++i) {
+                    clearTimeout(this.timeouts[i]);
+                }
+            }
+        }
+
+        window.customElements.define(MixLetterElement.is, MixLetterElement);
+    </script>
+</dom-module>
