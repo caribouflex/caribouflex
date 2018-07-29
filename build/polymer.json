@@ -3,24 +3,26 @@
   "shell": "src\\at-app\\at-app.html",
   "fragments": [],
   "sources": [
-    "src\\**\\*",
-    "images\\**\\*",
+    "src/**/*",
+    "images/**/*",
     "bower.json",
     "charming.min.js",
     "index.html",
-    "src\\at-app\\at-app.html"
+    "src/at-app/at-app.html"
   ],
   "extraDependencies": [
-    "bower_components\\webcomponentsjs\\*.js",
+    "bower_components/webcomponentsjs/*.js",
     "manifest.json",
-    "bower_components\\webcomponentsjs\\webcomponents-lite.js"
+    "bower_components/webcomponentsjs/webcomponents-lite.js",
+    "bower_components/particles.js/particles.min.js"
   ],
   "builds": [
     {
       "name": "es5-bundled",
       "js": {
         "minify": true,
-        "compile": true
+        "compile": "es5",
+        "transformModulesToAmd": true
       },
       "css": {
         "minify": true
@@ -41,7 +43,8 @@
       ],
       "js": {
         "minify": true,
-        "compile": false
+        "compile": "es2015",
+        "transformModulesToAmd": true
       },
       "css": {
         "minify": true
@@ -59,5 +62,6 @@
     "rules": [
       "polymer-2"
     ]
-  }
+  },
+  "moduleResolution": "node"
 }
